@@ -1643,3 +1643,5 @@ From *"I've never written a line of YAML"* to a **hardened, gated, keyless CI/CD
 **Where to go from here:** build the [`48-hardened-capstone.yml`](day-05/workflows/48-hardened-capstone.yml) against your own project, wire OIDC to your real cloud account, and turn on branch protection so every merge runs through the pipeline.
 
 Thanks for building along. If the series helped you, a like and subscribe on **LearnWithMithran** means a lot. 🚀
+#   D v e o p s _ G i t H u b _ A c t i o n  
+ 
