@@ -1,0 +1,45 @@
+# 46 - USING a Docker container action
+# Pairs with day-05/actions/greet-docker/ (action.yml + Dockerfile + entrypoint.sh).
+#
+# 📋 SETUP — copy these into your practice repo:
+#      .github/workflows/46-docker-action-demo.yml
+#      .github/actions/greet-docker/                 (the whole folder)
+#
+# ⚠️ TWO THINGS TO KNOW BEFORE RUNNING:
+#   1. `runs-on: ubuntu-latest` — Docker container actions run on LINUX ONLY.
+#      They will not run on windows-latest or macos-latest.
+#   2. The FIRST run BUILDS the image (you'll see Docker build output in the
+#      log), so it's slower than a JS action. Publishing the image to GHCR and
+#      referencing `image: docker://ghcr.io/...` skips that per-run build.
+#   3. Same local-action rule: `actions/checkout` must run first.
+#   4. `entrypoint.sh` MUST be saved with LF (Unix) line endings. Upload a CRLF
+#      copy — easy to do from Windows — and the build succeeds but the step
+#      fails with `exec /entrypoint.sh: no such file or directory`. The script
+#      is present; the shebang just became `#!/bin/sh\r`, so Linux hunts for an
+#      interpreter named `/bin/sh\r`. The Dockerfile now `sed`s the \r out.
+#
+# WHAT TO OBSERVE: expand the greet step and watch Docker build the Alpine
+# image, then the entrypoint prints "Hello from inside a container, ...". The
+# next step reads back the `greeting` output the container wrote to $GITHUB_OUTPUT.
+
+name: 46 - Docker Action
+
+on: workflow_dispatch
+
+permissions:
+  contents: read
+
+jobs:
+  use-the-container-action:
+    runs-on: ubuntu-latest        # Linux only for Docker actions
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Run the Docker action
+        id: greet
+        uses: ./.github/actions/greet-docker
+        with:
+          who: 'Mithran'
+
+      - name: Read the output the container produced
+        run: echo "greeting = ${{ steps.greet.outputs.greeting }}"
